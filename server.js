@@ -5,13 +5,14 @@ const app = express();
 
 const categorieRoute=require('./routes/categorie');
 const produitRoute=require('./routes/produit');
+const userRoute=require('./routes/user');
 
 
 app.use(express.json());
 
 app.use('/categorie',categorieRoute);
 app.use('/produit',produitRoute);
-
+app.use('/user',userRoute);
 app.use(express.json());
 
 app.use('/image' , express.static('./uploads'));

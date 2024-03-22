@@ -1,16 +1,16 @@
-const  Admin=require('../models/user');
+const  User=require('../models/user');
 const bcrypt=require('bcrypt');
 const jwt=require('jsonwebtoken');
 
 const registre=async(req,res)=>{
 try {
-  let admin=new Admin(req.body);
+  let user=new User(req.body);
 
 
 admin.password=bcrypt.hashSync(req.body.password,10);
 
 
-  let result=await admin.save();
+  let result=await user.save();
   res.status(200).send(result);
 
 
@@ -27,7 +27,7 @@ const login=async(req,res)=>{
     try {
 
 let {email,password}=req.body;
-let result =await Admin.findOne({email:email})
+let result =await User.findOne({email:email})
 if (!result) {
     res.status(401).send('email invalid')
 } 

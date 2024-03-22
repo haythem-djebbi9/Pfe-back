@@ -7,6 +7,8 @@ const categorieRoute=require('./routes/categorie');
 const produitRoute=require('./routes/produit');
 const couleurRoute=require('./routes/couleur');
 const userRoute=require('./routes/user');
+const panierRoute=require('./routes/panier');
+
 
 
 
@@ -17,6 +19,8 @@ app.use('/categorie',categorieRoute);
 app.use('/produit',produitRoute);
 app.use('/couleur',couleurRoute);
 app.use('/user',userRoute);
+app.use('/panier',panierRoute);
+
 
 
 

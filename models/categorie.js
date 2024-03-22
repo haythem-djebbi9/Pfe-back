@@ -12,8 +12,5 @@ description:{
 
 
 
-
-
-
 })
 module.exports=categorie;

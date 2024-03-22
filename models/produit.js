@@ -1,58 +1,34 @@
 const mongoose = require('mongoose');
-let objectId = require('mongodb').ObjectId;
 
-const produit=mongoose.model('produit',{
-name:{
-    type :String,
-    required:true,
-},
-description:{
-    type :String,
-    required:true,
-   
-},
-prix:{
-    type :Number,
-    required:true,
-   
-},
+const produitSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: true,
+    },
+    description: {
+        type: String,
+        required: true,
+    },
+    prix: {
+        type: Number,
+        required: true,
+    },
+    quantite: {
+        type: Number,
+        required: true,
+    },
+    image: {
+        type: String,
+        required: true,
+    },
+    idCat: {
+        type: mongoose.Types.ObjectId, // Utilisation de mongoose.Types.ObjectId
+        required: true,
+    },
+    favoir: {
+        type: Boolean,
+        default: false,
+    }
+});
 
-quantite:{
-    type :Number,
-    required:true,
-   
-},
-
-image:{
-    type :String,
-    required:true,
-   
-
-
-},
-idCat:
-{   
-    type:objectId , 
-},
-
-favoir:
-{   
-    type:Boolean , 
-    default:false   // par defaut il est faux
-},
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-})
-module.exports=produit;
+module.exports = mongoose.model('Produit', produitSchema); // Correction pour nommer le modèle "Produit"

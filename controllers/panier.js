@@ -1,40 +1,88 @@
+
+
+
+
+// Function to add a product to the cart
 const Panier = require('../models/panier');
-const Product = require('../models/produit');
 
-const createPanier = async (req, res, fileName) => {
+// Méthode pour ajouter un produit au panier d'un utilisateur
+exports.ajouterProduit = async (req, res) => {
+    const { userId, produitId } = req.body;
+
+    try {
+        // Trouver le panier de l'utilisateur en fonction de son ID
+        let panier = await Panier.findOne({ user: userId });
+
+        // Si l'utilisateur n'a pas de panier, créer un nouveau panier
+        if (!panier) {
+            panier = new Panier({
+                user: userId,
+                produits: [{ produit: produitId }]
+            });
+        } else {
+            // Vérifier si le produit est déjà dans le panier
+            const existingProduct = panier.produits.find(
+                item => item.produit.toString() === produitId
+            );
+
+            if (existingProduct) {
+                return res.status(400).json({ message: 'Le produit est déjà dans le panier.' });
+            }
+
+            // Ajouter le produit au panier
+            panier.produits.push({ produit: produitId });
+        }
+
+        // Enregistrer le panier mis à jour
+        await panier.save();
+
+        res.status(201).json(panier);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Erreur lors de l\'ajout du produit au panier.' });
+    }
+};
+
+exports.afficherProduitsPanier = async (req, res) => {
+  const { userId } = req.body;
+
   try {
-    // Find the cart belonging to the user
-    let cart = await Panier.findOne({ user: req.body._id });
-    if (!cart) {
-      cart = new Panier({
-        user: req.body._id
-      });
-    }
-    cart.itemsnumber++;
-    // Check if the item is already in the cart
-    const existingItem = cart.items.find(item => item.product.toString() === req.body.productId);
+      // Trouver le panier de l'utilisateur en fonction de son ID
+      const panier = await Panier.findOne({ user: userId }).populate('produits.produit');
+      
+      if (!panier) {
+          return res.status(404).json({ message: 'Panier non trouvé.' });
+      }
 
-    if (existingItem) {
-      // If the item is already in the cart, update the quantity
-      existingItem.quantity += +req.body.quantity;
-      console.log(typeof(req.body.quantity))
-      console.log(typeof(existingItem.quantity))
-    } else {
-      // If the item is not in the cart, add it
-      const product = await Product.findById(req.body.productId);
-      cart.items.push({ product: req.body.productId, quantity: req.body.quantity, name: product.name, image: product.image, category: product.category, price: product.price });
-    }
-    cart.total += req.body.price * req.body.quantity;
-    // Save the updated cart to the database
-    await cart.save();
-    res.send(cart);
+      res.status(200).json(panier.produits);
   } catch (error) {
-    res.status(400).send(error);
+      console.error(error);
+      res.status(500).json({ message: 'Erreur lors de la récupération des produits du panier.' });
   }
+};
 
-  
-}
-module.exports = {
-    createPanier
-   
-}
+// Méthode pour supprimer un produit du panier d'un utilisateur
+exports.supprimerProduit = async (req, res) => {
+  const { userId, produitId } = req.body;
+
+  try {
+      // Trouver le panier de l'utilisateur en fonction de son ID
+      const panier = await Panier.findOne({ user: userId });
+
+      if (!panier) {
+          return res.status(404).json({ message: 'Panier non trouvé.' });
+      }
+
+      // Filtrer les produits pour retirer celui spécifié
+      panier.produits = panier.produits.filter(item => item.produit.toString() !== produitId);
+
+      // Enregistrer le panier mis à jour
+      await panier.deleteOne();
+
+      res.status(200).json({ message: 'Produit supprimé du panier avec succès.' });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Erreur lors de la suppression du produit du panier.' });
+  }
+};
+

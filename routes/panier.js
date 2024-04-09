@@ -10,4 +10,7 @@ router.get('/all/:userId', afficherProduitsPanier);
 // Ajoutez :produitId pour permettre la transmission de l'ID du produit à supprimer
 router.delete('/supprimer/:userId/:produitId', supprimerProduit);
 
+
+
 module.exports = router;
+

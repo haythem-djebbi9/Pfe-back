@@ -6,6 +6,7 @@ const router = express.Router();
 
   const {createProduit,getAllProduit,getProduitById,getProduitByCat,deleteProduit,updateProduit} =require('../controllers/produit');
  
+  const {addToFavorites,removeFromFavorites} =require('../controllers/favoir');
 
 // multer config
 
@@ -47,8 +48,6 @@ router.put('/update/:id', upload.any('image'), (req, res) => {
 
 //delete employee
 router.delete('/supprimer/:id', deleteProduit);
-
-
 
 
 

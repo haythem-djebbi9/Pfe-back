@@ -5,7 +5,6 @@ const categorie = require('../models/categorie');
 
 
 
-
 const create = async (req, res) => {
     try {
       let data = req.body;

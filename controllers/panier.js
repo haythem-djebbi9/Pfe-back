@@ -1,14 +1,8 @@
 
-
-
-
-// Function to add a product to the cart
 const Panier = require('../models/panier');
 
-// Méthode pour ajouter un produit au panier d'un utilisateur
 exports.ajouterProduit = async (req, res) => {
     const { userId, produitId } = req.body;
-
     try {
         // Trouver le panier de l'utilisateur en fonction de son ID
         let panier = await Panier.findOne({ user: userId });
@@ -20,7 +14,6 @@ exports.ajouterProduit = async (req, res) => {
                 produits: [{ produit: produitId }]
             });
         } else {
-            // Vérifier si le produit est déjà dans le panier
             const existingProduct = panier.produits.find(
                 item => item.produit.toString() === produitId
             );
@@ -28,12 +21,8 @@ exports.ajouterProduit = async (req, res) => {
             if (existingProduct) {
                 return res.status(400).json({ message: 'Le produit est déjà dans le panier.' });
             }
-
-            // Ajouter le produit au panier
             panier.produits.push({ produit: produitId });
         }
-
-        // Enregistrer le panier mis à jour
         await panier.save();
 
         res.status(201).json(panier);

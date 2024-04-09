@@ -3,24 +3,24 @@ const bcrypt=require('bcrypt');
 const jwt=require('jsonwebtoken');
 
 const registre=async(req,res)=>{
-try {
-  let user=new User(req.body);
-
-
-admin.password=bcrypt.hashSync(req.body.password,10);
-
-
-  let result=await user.save();
-  res.status(200).send(result);
-
-
-} catch (error) {
-   res.status(500).send(error);
-}
-
-
-
-}
+  try {
+    let admin=new User(req.body);
+  
+  
+  admin.password=bcrypt.hashSync(req.body.password,10);
+  
+  
+    let result=await admin.save();
+    res.status(200).send(result);
+  
+  
+  } catch (error) {
+     res.status(500).send(error);
+  }
+  
+  
+  
+  }
 
 const login=async(req,res)=>{
 

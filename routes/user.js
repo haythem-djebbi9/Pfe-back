@@ -7,6 +7,8 @@ router.post('/registre',registre);
 router.post('/login',login);
 
 
+// Routes pour ajouter et supprimer des produits favoris pour un utilisateur
+
 
 
 

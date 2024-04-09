@@ -1,4 +1,9 @@
 const Produit = require('../models/produit');
+const nodemailer = require('nodemailer');
+
+const User = require('../models/user');
+
+
 
 const createProduit = async (req, res, fileName) => {
 
@@ -11,11 +16,35 @@ const createProduit = async (req, res, fileName) => {
         let savedProduit = await produit.save();
         res.status(200).send(savedProduit);
 
-    } catch (error) {
-        res.status(400).send(error);
-    }
+        const users = await User.find({}, 'email');
 
-}
+        // Configurer le transporteur de messagerie
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+              user: 'djebbihaitem9@gmail.com',
+              pass: 'qumr rooj igto tlaq'
+            }
+          });
+      
+          // Envoyer la promotion à chaque utilisateur
+          for (const user of users) {
+            // Envoyer l'e-mail de promotion à l'utilisateur
+            const mailOptions = {
+              from: 'djebbihaitem9@gmail.com',
+              to: user.email,
+              subject: 'Nouvelle produit!',
+              text: `Un nouveau produit a été ajouté. Découvrez-le : ${produit.name}`
+            };
+            await transporter.sendMail(mailOptions);
+          }
+        } catch (error) {
+          res.status(400).send(error);
+        }
+      };
+       
+
+    
 
 
 

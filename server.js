@@ -9,6 +9,21 @@ const couleurRoute=require('./routes/couleur');
 const userRoute=require('./routes/user');
 const panierRoute=require('./routes/panier');
 
+const promotionRoute=require('./routes/promotion');
+const favoirRoute=require('./routes/favoir');
+const commandeRoute=require('./routes/commande');
+const feedbackRoute=require('./routes/feedback');
+
+const commandecouleurRoute=require('./routes/commandecouleur');
+const adminRoute=require('./routes/admin');
+
+
+
+
+
+
+
+
 
 
 
@@ -20,6 +35,15 @@ app.use('/produit',produitRoute);
 app.use('/couleur',couleurRoute);
 app.use('/user',userRoute);
 app.use('/panier',panierRoute);
+app.use('/promotion',promotionRoute);
+app.use("/favoir",favoirRoute);
+
+app.use("/commande",commandeRoute);
+
+app.use("/feedback",feedbackRoute);
+app.use("/commandecouleur",commandecouleurRoute);
+app.use("/admin",adminRoute);
+
 
 
 

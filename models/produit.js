@@ -25,10 +25,7 @@ const produitSchema = new mongoose.Schema({
         type: mongoose.Types.ObjectId, // Utilisation de mongoose.Types.ObjectId
         required: true,
     },
-    favoir: {
-        type: Boolean,
-        default: false,
-    }
+  
 });
 
 module.exports = mongoose.model('Produit', produitSchema); // Correction pour nommer le modèle "Produit"

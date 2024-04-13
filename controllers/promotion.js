@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer');
 const Promotion = require('../models/promotion');
-const User = require('../models/user');
+const User = require('../models/userr');
 
 const sendPromotionEmails = async (req, res) => {
   try {

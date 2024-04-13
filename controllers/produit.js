@@ -1,7 +1,7 @@
 const Produit = require('../models/produit');
 const nodemailer = require('nodemailer');
 
-const User = require('../models/user');
+const User = require('../models/userr');
 
 
 

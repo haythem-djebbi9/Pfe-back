@@ -1,7 +1,8 @@
+
 const mongoose = require('mongoose');
 let objectId = require('mongodb').ObjectId;
 
-const user=mongoose.model('user',{
+const livreur=mongoose.model('livreur',{
 name:{
     type :String,
     required:true,
@@ -34,8 +35,7 @@ password:{
    
 
 
-},
-
+}
 
 
 
@@ -54,4 +54,4 @@ password:{
 
 
 })
-module.exports=user;
+module.exports=livreur;

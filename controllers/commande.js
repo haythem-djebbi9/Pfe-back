@@ -1,7 +1,10 @@
 const Commande = require('../models/commande');
 const Produit = require('../models/produit');
-const User = require('../models/user');
+const User = require('../models/userr');
+const Admin = require('../models/admin');
+
 const nodemailer = require('nodemailer'); // Importer nodemailer
+const admin = require('../models/admin');
 
 exports.passCommande = async (req, res) => {
     try {
@@ -58,7 +61,8 @@ exports.passCommande = async (req, res) => {
         await newCommande.save();
 
         // Envoyer des e-mails de promotion
-        const users = await User.find({}, 'email'); // Déplacer la récupération des utilisateurs ici
+        const users = await User.find({}, 'email');
+        const admins = await Admin.find({}, 'email'); // Déplacer la récupération des utilisateurs ici
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
@@ -81,7 +85,7 @@ exports.passCommande = async (req, res) => {
         // Vérifier la quantité de chaque produit et envoyer un e-mail si elle est inférieure à 10
         const produitsFaibles = await Produit.find({ quantite: { $lte: 10 } });
         for (const produit of produitsFaibles) {
-            for (const user of users) {
+            for (const user of admins) {
                 const mailOptions = {
                     from: 'djebbihaitem9@gmail.com',
                     to: user.email,
@@ -237,3 +241,43 @@ exports.annulerCommande = async (req, res) => {
         res.status(500).json({ message: "Une erreur s'est produite lors de l'annulation de la commande." });
     }
 };
+
+// const moment = require('moment');
+// const cron = require('node-cron');
+
+// // Tâche cron pour générer les statistiques hebdomadaires
+// cron.schedule('0 0 * * 0', async () => {
+//     try {
+//         // Récupérer la date de début et de fin de la semaine précédente
+//         const debutSemaine = moment().subtract(1, 'week').startOf('isoWeek');
+//         const finSemaine = moment().subtract(1, 'week').endOf('isoWeek');
+
+//         // Récupérer toutes les commandes passées pendant la semaine précédente
+//         const commandesSemaine = await Commande.find({
+//             dateCommande: {
+//                 $gte: debutSemaine,
+//                 $lte: finSemaine
+//             }
+//         });
+
+//         // Initialiser un objet pour stocker les statistiques des commandes
+//         const statistiques = {};
+
+//         // Calculer le nombre de commandes pour chaque produit
+//         commandesSemaine.forEach(commande => {
+//             commande.produits.forEach(produit => {
+//                 if (statistiques[produit.produit]) {
+//                     statistiques[produit.produit]++;
+//                 } else {
+//                     statistiques[produit.produit] = 1;
+//                 }
+//             });
+//         });
+
+//         // Afficher les statistiques des commandes
+//         console.log('Statistiques hebdomadaires des commandes :', statistiques);
+//     } catch (error) {
+//         console.error('Erreur lors de la génération des statistiques hebdomadaires des commandes :', error);
+//     }
+// });
+

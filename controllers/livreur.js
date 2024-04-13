@@ -1,10 +1,10 @@
-const  User=require('../models/userr');
+const  Livreur=require('../models/livreur');
 const bcrypt=require('bcrypt');
 const jwt=require('jsonwebtoken');
 
 const registre=async(req,res)=>{
   try {
-    let admin=new User(req.body);
+    let admin=new Livreur(req.body);
   
   
   admin.password=bcrypt.hashSync(req.body.password,10);
@@ -25,7 +25,7 @@ const registre=async(req,res)=>{
   const login = async (req, res) => {
     try {
         let { email, password } = req.body;
-        let result = await User.findOne({ email: email });
+        let result = await Livreur.findOne({ email: email });
 
         if (!result) {
             return res.status(401).send('Email invalide');
@@ -52,10 +52,34 @@ const registre=async(req,res)=>{
         res.status(500).send(error);
     }
 }
+const deleteLivreur = async (req, res) => {
+    try {
+        const livreurId = req.params.livreurId;
+        const deletedLivreur = await Livreur.findByIdAndDelete(livreurId);
+        if (!deletedLivreur) {
+            return res.status(404).json({ message: "livreur introuvable." });
+        }
+        res.status(200).json({ message: "livreur supprimé avec succès." });
+    } catch (error) {
+        res.status(500).send(error);
+    }
+};
+
+// Fonction pour afficher tous les administrateurs
+const getAllLivreur = async (req, res) => {
+    try {
+        const admins = await Livreur.find();
+        res.status(200).json(admins);
+    } catch (error) {
+        res.status(500).send(error);
+    }
+};
 
 module.exports={
 registre,
-login
+login,
+deleteLivreur,
+getAllLivreur
 
 }
 

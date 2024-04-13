@@ -1,6 +1,6 @@
 const feedback = require('../models/feedback');
 const Feedback = require('../models/feedback');
-const User = require('../models/user');
+const User = require('../models/userr');
 
 // Méthode pour ajouter un feedback
 exports.addFeedback = async (req, res) => {

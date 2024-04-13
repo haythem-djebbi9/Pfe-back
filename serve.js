@@ -6,7 +6,7 @@ const app = express();
 const categorieRoute=require('./routes/categorie');
 const produitRoute=require('./routes/produit');
 const couleurRoute=require('./routes/couleur');
-const userRoute=require('./routes/user');
+const userRoute=require('./routes/userr');
 const panierRoute=require('./routes/panier');
 
 const promotionRoute=require('./routes/promotion');
@@ -16,6 +16,9 @@ const feedbackRoute=require('./routes/feedback');
 
 const commandecouleurRoute=require('./routes/commandecouleur');
 const adminRoute=require('./routes/admin');
+const livreurRoute=require('./routes/livreur');
+
+
 
 
 
@@ -43,6 +46,8 @@ app.use("/commande",commandeRoute);
 app.use("/feedback",feedbackRoute);
 app.use("/commandecouleur",commandecouleurRoute);
 app.use("/admin",adminRoute);
+app.use("/livreur",livreurRoute);
+
 
 
 

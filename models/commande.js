@@ -40,6 +40,10 @@ const CommandeSchema = new Schema({
     nbCommandePr : {
         type:Number,
         default: 0
+    },
+    livree : {
+type: Boolean,
+default : false
     }
 });
 

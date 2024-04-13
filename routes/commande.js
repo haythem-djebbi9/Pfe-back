@@ -11,5 +11,7 @@ router.get('/getcommandebyuser/:userId', commandeController.getcommandebyuser);
 router.delete('/commandeannuler/:commandeId', commandeController.annulerCommande);
 
 
+// router.get('/statistiques-commandes', commandeController.afficherStatistiquesHebdomadaires);
+
 
 module.exports = router;

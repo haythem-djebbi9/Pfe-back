@@ -17,6 +17,8 @@ const feedbackRoute=require('./routes/feedback');
 const commandecouleurRoute=require('./routes/commandecouleur');
 const adminRoute=require('./routes/admin');
 const livreurRoute=require('./routes/livreur');
+const statcommandeRoute=require('./routes/statcommande');
+
 
 
 
@@ -48,6 +50,7 @@ app.use("/commandecouleur",commandecouleurRoute);
 app.use("/admin",adminRoute);
 app.use("/livreur",livreurRoute);
 
+app.use("/statcommande",statcommandeRoute);
 
 
 

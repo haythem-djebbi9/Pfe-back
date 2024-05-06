@@ -42,8 +42,12 @@ const CommandeSchema = new Schema({
         default: 0
     },
     livree : {
-type: Boolean,
-default : false
+        type: Boolean,
+        default : false
+    },
+    dateLivraison: {
+        type: Date, // Champ pour stocker la date de livraison
+        default: null // La date de livraison est nulle par défaut, car la commande n'a pas été livrée
     }
 });
 

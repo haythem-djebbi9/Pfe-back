@@ -22,6 +22,21 @@ const registre=async(req,res)=>{
   
   }
 
+  const getUserById = async (req, res) => {
+
+    try {
+
+        let id = req.params.id;
+        let result = await User.findById({ _id: id });
+
+        res.status(200).send(result);
+
+    } catch (error) {
+        res.status(400).send(error);
+    }
+
+}
+
   const login = async (req, res) => {
     try {
         let { email, password } = req.body;
@@ -55,7 +70,8 @@ const registre=async(req,res)=>{
 
 module.exports={
 registre,
-login
+login,
+getUserById
 
 }
 

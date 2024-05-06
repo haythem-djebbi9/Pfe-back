@@ -22,7 +22,8 @@ const produitSchema = new mongoose.Schema({
         required: true,
     },
     idCat: {
-        type: mongoose.Types.ObjectId, // Utilisation de mongoose.Types.ObjectId
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Categorie', // Assurez-vous que c'est le bon nom de modèle pour la catégorie
         required: true,
     },
   

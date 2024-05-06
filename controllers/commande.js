@@ -2,6 +2,7 @@
 const Produit = require('../models/produit');
 const User = require('../models/userr');
 const Admin = require('../models/admin');
+const Commande = require('../models/commande');
 
 const nodemailer = require('nodemailer'); // Importer nodemailer
 const admin = require('../models/admin');
@@ -11,7 +12,7 @@ exports.passCommande = async (req, res) => {
         // Récupérer l'ID de l'utilisateur et la liste des produits avec leurs quantités
         const { userId, produits } = req.body;
 
-        // Vérifier si l'utilisateur existe
+        // Vérifier si l'uatilisateur existe
         const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ message: "Utilisateur introuvable." });
@@ -53,9 +54,8 @@ exports.passCommande = async (req, res) => {
             user: userId,
             produits: produits,
             quantitec: produits.length,
-            total: total,
-            totalad: totalad
-        });
+            total: total
+                });
 
         // Enregistrer la commande dans la base de données
         await newCommande.save();
@@ -140,9 +140,17 @@ exports.getAllCommandes = async (req, res) => {
             // Ajouter les détails de la commande dans le tableau
             commandesDetails.push({
                 user: user.name,
+                prenom:user.prenom,
                 emailUser: user.email,
                 usertel: user.telephone,
                 useraddresse: user.adresse,
+                produits: produitsDetails,
+                total: commande.total,
+                livree: commande.livree,
+                date: commande.date,
+                dateLivraison: commande.dateLivraison
+               
+
                 
             });
         }
@@ -198,7 +206,8 @@ exports.getcommandebyuser = async (req, res) => {
                 produits: filteredProduitsDetails,
                 quantitec: commande.quantitec,
                 total: commande.total,
-                Date: commande.date
+                Date: commande.date,
+                dateLivraison : commande.dateLivraison
                 // Date: commande.dateCommande // Cette ligne est commentée car la date de commande n'est pas renvoyée
             });
         }
@@ -242,3 +251,24 @@ exports.annulerCommande = async (req, res) => {
     }
 };
 
+exports.livreCommande = async (req, res) => {
+    try {
+        const commandeId = req.params.commandeId;
+
+        // Vérifier si la commande existe
+        const commande = await Commande.findById(commandeId);
+        if (!commande) {
+            return res.status(404).json({ message: "Commande introuvable." });
+        }
+
+        // Marquer la commande comme livrée et enregistrer la date de livraison
+        commande.livree = true;
+        commande.dateLivraison = new Date(); // Utiliser la date actuelle comme date de livraison
+        await commande.save();
+
+        res.status(200).json({ message: "Commande marquée comme livrée avec succès." });
+    } catch (error) {
+        console.error('Erreur lors du marquage de la commande comme livrée :', error);
+        res.status(500).json({ message: "Une erreur s'est produite lors du marquage de la commande comme livrée." });
+    }
+};

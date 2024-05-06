@@ -51,6 +51,9 @@ exports.getAllFeedbacks = async (req, res) => {
             feedbacksDetails.push({
                 user: {
                     name: user.name,
+                    prenom: user.prenom,
+                    telephone: user.telephone,
+
                    
                 },
                 feedbackText: feedback.feedback

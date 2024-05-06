@@ -1,6 +1,8 @@
 const express= require('express');
- require('./config/connect')
+require('./config/connect')
+
 const app = express();
+const cors = require('cors');
 
 
 const categorieRoute=require('./routes/categorie');
@@ -19,7 +21,10 @@ const adminRoute=require('./routes/admin');
 const livreurRoute=require('./routes/livreur');
 const statcommandeRoute=require('./routes/statcommande');
 
+app.use(express.json());
 
+// Middleware pour activer CORS
+app.use(cors());
 
 
 
@@ -34,6 +39,8 @@ const statcommandeRoute=require('./routes/statcommande');
 
 
 app.use(express.json());
+app.use(cors());
+
 
 app.use('/categorie',categorieRoute);
 app.use('/produit',produitRoute);
@@ -56,7 +63,7 @@ app.use("/statcommande",statcommandeRoute);
 
 
 
-app.use(express.json());
+
 
 app.use('/image' , express.static('./uploads'));
 

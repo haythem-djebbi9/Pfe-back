@@ -104,6 +104,21 @@ const sendPromotionEmails = async (req, res) => {
   }
 };
 
+const getall=async (req,res)=>{
+  try {
+    let result =await Promotion.find();
+    res.status(200).send(result);
+    
+  } catch (error) {
+    res.status(500).send(error);
+  }
+  
+  
+  
+  }
+  
+
 module.exports = {
-  sendPromotionEmails
+  sendPromotionEmails,
+  getall
 };

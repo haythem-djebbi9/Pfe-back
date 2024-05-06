@@ -48,4 +48,24 @@ exports.supprimerProduit = async (req, res) => {
         console.error(error);
         res.status(500).json({ message: 'Erreur lors de la suppression du produit du panier.' });
     }
+    
 };
+
+exports.isProduitFavori = async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const produitId = req.params.produitId;
+
+        // Recherchez dans la collection des favoris pour voir si une entrée correspondante existe
+        const favori = await Favoir.findOne({ user: userId, 'produits.produit': produitId });
+
+        // Si une entrée est trouvée, le produit est dans les favoris, sinon, il ne l'est pas
+        const isProduitFavori = !!favori;
+
+        res.status(200).json(isProduitFavori);
+    } catch (error) {
+        console.error('Erreur lors de la vérification si le produit est favori :', error);
+        res.status(500).json({ message: 'Erreur lors de la vérification si le produit est favori' });
+    }
+};
+

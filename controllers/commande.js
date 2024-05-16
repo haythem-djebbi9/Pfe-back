@@ -139,6 +139,7 @@ exports.getAllCommandes = async (req, res) => {
 
             // Ajouter les détails de la commande dans le tableau
             commandesDetails.push({
+                id: commande._id,
                 user: user.name,
                 prenom:user.prenom,
                 emailUser: user.email,

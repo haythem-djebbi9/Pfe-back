@@ -8,6 +8,12 @@ router.post('/commandecadd', commandecouleur.createCommande);
 router.get('/all', commandecouleur.getAllCommandes);
 
 
+// Route pour afficher l'historique des commandes d'un utilisateur spécifique
+router.get('/commandes/:userId', commandecouleur.getUserCommandes);
+
+// Route pour annuler une commande spécifique
+router.delete('/commande/:commandeId', commandecouleur.annulerCommande);
+
 
 
 

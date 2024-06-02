@@ -14,7 +14,7 @@ router.get('/commandes/:userId', commandecouleur.getUserCommandes);
 // Route pour annuler une commande spécifique
 router.delete('/commande/:commandeId', commandecouleur.annulerCommande);
 
-
+router.put('/livreCommande/:commandeId',commandecouleur.livreCommande )
 
 
 // Route pour obtenir toutes les commandes d'un utilisateur

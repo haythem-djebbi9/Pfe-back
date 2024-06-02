@@ -3,36 +3,41 @@ const User = require('../models/userr');
 const Couleur = require('../models/couleur');
 const nodemailer = require('nodemailer');
 
-// Fonction pour créer une nouvelle commande de couleur pour un utilisateur donné
 exports.createCommande = async (req, res) => {
     try {
-        // Récupérer l'ID de l'utilisateur, les détails de la commande et la quantité
-        const { userId, couleurId, quantite } = req.body;
+        console.log('Received order data:', req.body);  // Log the received data
+
+        // Récupérer l'ID de l'utilisateur et les détails des couleurs commandées
+        const { userId, couleurs } = req.body;
 
         const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ message: "Utilisateur introuvable." });
         }
 
-        // Vérifier si la couleur existe
-        const couleur = await Couleur.findById(couleurId);
-        if (!couleur) {
-            return res.status(404).json({ message: "Couleur introuvable." });
+        for (let item of couleurs) {
+            const { couleur, quantite } = item;
+
+            // Vérifier si la couleur existe
+            const couleurObj = await Couleur.findById(couleur);
+            if (!couleurObj) {
+                return res.status(404).json({ message: `Couleur avec ID ${couleur} introuvable.` });
+            }
+
+            // Calculer le prix en fonction de la quantité
+            const prix = 16 * quantite;
+
+            // Créer une nouvelle commande de couleur avec les détails
+            const newCommande = new CommandeCouleur({
+                user: userId,
+                couleur: couleur,
+                quantite: quantite,
+                prix: prix
+            });
+
+            // Enregistrer la commande dans la base de données
+            await newCommande.save();
         }
-
-        // Calculer le prix en fonction de la quantité
-        const prix = 16 * quantite;
-
-        // Créer une nouvelle commande de couleur avec les détails
-        const newCommande = new CommandeCouleur({
-            user: userId,
-            couleur: couleurId,
-            quantite: quantite,
-            prix: prix
-        });
-
-        // Enregistrer la commande dans la base de données
-        await newCommande.save();
 
         // Envoyer un e-mail de confirmation pour la commande
         const transporter = nodemailer.createTransport({
@@ -42,16 +47,18 @@ exports.createCommande = async (req, res) => {
                 pass: 'qumr rooj igto tlaq'
             }
         });
+
         const mailOptions = {
             from: 'djebbihaitem9@gmail.com',
             to: user.email,
             subject: 'Confirmation de commande',
-            text: `Votre commande est confirmée. Dans 48 heures, votre commande sera ${couleur.codec}`
+            text: `Votre commande est confirmée.`
         };
         await transporter.sendMail(mailOptions);
 
         res.status(201).json({ message: 'Commande créée avec succès.' });
     } catch (error) {
+        console.error('Error creating order:', error);  // Log the error
         res.status(500).json({ message: error.message });
     }
 };
@@ -87,7 +94,7 @@ exports.getAllCommandes = async (req, res) => {
 
             // Ajouter les détails de la commande dans le tableau
             commandesDetails.push({
-                id:couleur._id,
+                id:commande._id,
                 user: user.name,
                 prenom:user.prenom,
                 emailUser: user.email,
@@ -97,7 +104,9 @@ exports.getAllCommandes = async (req, res) => {
                 quantite: commande.quantite,
                 prix: commande.prix,
                 date: commande.date,
-                datelivraison: commande.dateLivraison
+                livre:commande.livree,
+
+                datelivraison: commande.dateLivraison,
             });
         }
 
@@ -170,7 +179,7 @@ exports.livreCommande = async (req, res) => {
         commande.dateLivraison = new Date(); // Utiliser la date actuelle comme date de livraison
         await commande.save();
 
-        res.status(200).json({ message: "Commande marquée comme livrée avec succès." });
+        res.status(200).json({ message: "Commande marquée comme livrée avec succès.", commande });
     } catch (error) {
         console.error('Erreur lors du marquage de la commande comme livrée :', error);
         res.status(500).json({ message: "Une erreur s'est produite lors du marquage de la commande comme livrée." });

@@ -1,13 +1,10 @@
-
 const Panier = require('../models/panier');
 
 exports.ajouterProduit = async (req, res) => {
     const { userId, produitId } = req.body;
     try {
-        // Trouver le panier de l'utilisateur en fonction de son ID
         let panier = await Panier.findOne({ user: userId });
 
-        // Si l'utilisateur n'a pas de panier, créer un nouveau panier
         if (!panier) {
             panier = new Panier({
                 user: userId,
@@ -24,7 +21,6 @@ exports.ajouterProduit = async (req, res) => {
             panier.produits.push({ produit: produitId });
         }
         await panier.save();
-
         res.status(201).json(panier);
     } catch (error) {
         console.error(error);
@@ -32,46 +28,40 @@ exports.ajouterProduit = async (req, res) => {
     }
 };
 
-exports.afficherProduitsPanier = async (req, res) => {
-  const { userId } = req.body;
-
-  try {
-      // Trouver le panier de l'utilisateur en fonction de son ID
-      const panier = await Panier.findOne({ user: userId }).populate('produits.produit');
-      
-      if (!panier) {
-          return res.status(404).json({ message: 'Panier non trouvé.' });
-      }
-
-      res.status(200).json(panier.produits);
-  } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Erreur lors de la récupération des produits du panier.' });
-  }
-};
-
-// Méthode pour supprimer un produit du panier d'un utilisateur
 exports.supprimerProduit = async (req, res) => {
-  const { userId, produitId } = req.body;
+    const { userId, produitId } = req.params;
+    try {
+        const panier = await Panier.findOne({ user: userId });
 
-  try {
-      // Trouver le panier de l'utilisateur en fonction de son ID
-      const panier = await Panier.findOne({ user: userId });
+        if (!panier) {
+            return res.status(404).json({ message: 'Panier non trouvé.' });
+        }
 
-      if (!panier) {
-          return res.status(404).json({ message: 'Panier non trouvé.' });
-      }
+        panier.produits = panier.produits.filter(item => item.produit.toString() !== produitId);
 
-      // Filtrer les produits pour retirer celui spécifié
-      panier.produits = panier.produits.filter(item => item.produit.toString() !== produitId);
+        await panier.save(); // Utiliser save() au lieu de deleteOne()
 
-      // Enregistrer le panier mis à jour
-      await panier.deleteOne();
-
-      res.status(200).json({ message: 'Produit supprimé du panier avec succès.' });
-  } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Erreur lors de la suppression du produit du panier.' });
-  }
+        res.status(200).json({ message: 'Produit supprimé du panier avec succès.' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Erreur lors de la suppression du produit du panier.' });
+    }
 };
 
+exports.isProduitDansPanier = async (req, res) => {
+    const { userId, produitId } = req.params;
+    try {
+        const panier = await Panier.findOne({ user: userId });
+
+        if (!panier) {
+            return res.status(404).json({ message: 'Panier non trouvé.' });
+        }
+
+        const isDansPanier = panier.produits.some(item => item.produit.toString() === produitId);
+
+        res.status(200).json(isDansPanier);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Erreur lors de la vérification du produit dans le panier.' });
+    }
+};

@@ -48,7 +48,11 @@ const CommandeSchema = new Schema({
     dateLivraison: {
         type: Date, // Champ pour stocker la date de livraison
         default: null // La date de livraison est nulle par défaut, car la commande n'a pas été livrée
-    }
+    },
+    accepte : {
+        type: Boolean,
+        default : false
+    },
 });
 
 module.exports = mongoose.model('Commande', CommandeSchema);

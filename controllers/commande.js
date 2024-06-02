@@ -9,60 +9,45 @@ const admin = require('../models/admin');
 
 exports.passCommande = async (req, res) => {
     try {
-        // Récupérer l'ID de l'utilisateur et la liste des produits avec leurs quantités
         const { userId, produits } = req.body;
 
-        // Vérifier si l'uatilisateur existe
         const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ message: "Utilisateur introuvable." });
         }
 
-        // Initialiser les variables pour stocker les totaux
         let total = 0;
-        let totalad = 0;
 
-        // Parcourir la liste des produits pour calculer le total et mettre à jour la quantité disponible
         for (const item of produits) {
-            // Récupérer les détails du produit depuis la base de données
             const produit = await Produit.findById(item.produit);
             if (!produit) {
                 return res.status(404).json({ message: "Produit introuvable." });
             }
 
             if (produit.quantite < item.quantite) {
-                console.log('Quantité insuffisante pour le produit :', produit.name);
                 return res.status(400).json({ message: `Quantité insuffisante pour le produit ${produit.name}.` });
             }
 
-            
-            // Calculer le total pour ce produit en multipliant la quantité par le prix
             total += item.quantite * produit.prix;
-
-            // Mettre à jour la quantité disponible du produit en soustrayant la quantité commandée
             produit.quantite -= item.quantite;
             await produit.save();
         }
 
-        // Appliquer une réduction si le total est supérieur à 100
         if (total > 100) {
-            total = total * 0.85; // Appliquer une réduction de 15%
+            total = total * 0.85;
         }
 
-        // Créer une nouvelle commande avec les détails
         const newCommande = new Commande({
             user: userId,
             produits: produits,
             quantitec: produits.length,
             total: total
-                });
+        });
 
-        // Enregistrer la commande dans la base de données
         await newCommande.save();
 
-        // Envoyer des e-mails de promotion
         const users = await User.find({}, 'email');
-        const admins = await Admin.find({}, 'email'); // Déplacer la récupération des utilisateurs ici
+        const admins = await Admin.find({}, 'email');
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
@@ -70,8 +55,7 @@ exports.passCommande = async (req, res) => {
               pass: 'qumr rooj igto tlaq'
             }
         });
-      
-        // Envoyer la promotion à chaque utilisateur
+
         for (const user of users) {
             const mailOptions = {
                 from: 'djebbihaitem9@gmail.com',
@@ -82,7 +66,6 @@ exports.passCommande = async (req, res) => {
             await transporter.sendMail(mailOptions);
         }
 
-        // Vérifier la quantité de chaque produit et envoyer un e-mail si elle est inférieure à 10
         const produitsFaibles = await Produit.find({ quantite: { $lte: 10 } });
         for (const produit of produitsFaibles) {
             for (const user of admins) {
@@ -96,13 +79,13 @@ exports.passCommande = async (req, res) => {
             }
         }
 
-        // Répondre avec la nouvelle commande créée
         res.status(201).json(newCommande);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Une erreur s'est produite lors de la création de la commande." });
     }
 };
+
 
 exports.getAllCommandes = async (req, res) => {
     try {
@@ -149,7 +132,8 @@ exports.getAllCommandes = async (req, res) => {
                 total: commande.total,
                 livree: commande.livree,
                 date: commande.date,
-                dateLivraison: commande.dateLivraison
+                dateLivraison: commande.dateLivraison,
+                accepte:commande.accepte
                
 
                 
@@ -204,11 +188,17 @@ exports.getcommandebyuser = async (req, res) => {
 
             // Ajouter les détails de la commande dans le tableau
             commandesDetails.push({
+                id: commande._id,
+
                 produits: filteredProduitsDetails,
                 quantitec: commande.quantitec,
                 total: commande.total,
                 Date: commande.date,
-                dateLivraison : commande.dateLivraison
+                dateLivraison : commande.dateLivraison,
+                accepte:commande.accepte,
+                livree: commande.livree,
+
+
                 // Date: commande.dateCommande // Cette ligne est commentée car la date de commande n'est pas renvoyée
             });
         }
@@ -271,5 +261,25 @@ exports.livreCommande = async (req, res) => {
     } catch (error) {
         console.error('Erreur lors du marquage de la commande comme livrée :', error);
         res.status(500).json({ message: "Une erreur s'est produite lors du marquage de la commande comme livrée." });
+    }
+};
+exports.accepterCommande = async (req, res) => {
+    try {
+        const commandeId = req.params.commandeId;
+
+        // Vérifier si la commande existe
+        const commande = await Commande.findById(commandeId);
+        if (!commande) {
+            return res.status(404).json({ message: "Commande introuvable." });
+        }
+
+        // Marquer la commande comme acceptée
+        commande.accepte = true;
+        await commande.save();
+
+        res.status(200).json({ message: "Commande acceptée avec succès." });
+    } catch (error) {
+        console.error('Erreur lors de l\'acceptation de la commande :', error);
+        res.status(500).json({ message: "Une erreur s'est produite lors de l'acceptation de la commande." });
     }
 };

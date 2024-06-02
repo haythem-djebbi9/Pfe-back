@@ -11,6 +11,11 @@ const feedbackSchema = new Schema({
         type: String,
         required: true,
     },
+    affiche : {
+        type: Boolean,
+        default : false
+    },
+
 });
 
 module.exports = mongoose.model('Feedback', feedbackSchema);

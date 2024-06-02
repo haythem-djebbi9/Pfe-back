@@ -9,5 +9,6 @@ router.post('/add', feedbackController.addFeedback);
 router.get('/all', feedbackController.getAllFeedbacks);
 
 router.get('/:id', feedbackController.getFeedbackById);
+router.put('/affiche/:feedbackId', feedbackController.setFeedbackAffiche);
 
 module.exports = router;

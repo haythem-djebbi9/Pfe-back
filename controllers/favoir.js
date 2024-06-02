@@ -12,7 +12,7 @@ exports.ajouterProduit = async (req, res) => {
                 produits: [{ produit: produitId }]
             });
         } else {
-            const existingProduct = panier.produits.find(item => item.produit.toString() === produitId);
+            const existingProduct = panier.produits.find(item => item.produit && item.produit.toString() === produitId);
 
             if (existingProduct) {
                 return res.status(400).json({ message: 'Le produit est déjà dans le panier.' });
@@ -24,7 +24,7 @@ exports.ajouterProduit = async (req, res) => {
 
         res.status(201).json(panier);
     } catch (error) {
-        console.error(error);
+        console.error('Erreur lors de l\'ajout du produit au panier :', error);
         res.status(500).json({ message: 'Erreur lors de l\'ajout du produit au panier.' });
     }
 };
@@ -39,27 +39,23 @@ exports.supprimerProduit = async (req, res) => {
             return res.status(404).json({ message: 'Panier non trouvé.' });
         }
 
-        panier.produits = panier.produits.filter(item => item.produit.toString() !== produitId);
+        panier.produits = panier.produits.filter(item => item.produit && item.produit.toString() !== produitId);
 
         await panier.save();
 
         res.status(200).json({ message: 'Produit supprimé du panier avec succès.' });
     } catch (error) {
-        console.error(error);
+        console.error('Erreur lors de la suppression du produit du panier :', error);
         res.status(500).json({ message: 'Erreur lors de la suppression du produit du panier.' });
     }
-    
 };
 
 exports.isProduitFavori = async (req, res) => {
     try {
-        const userId = req.params.userId;
-        const produitId = req.params.produitId;
+        const { userId, produitId } = req.params;
 
-        // Recherchez dans la collection des favoris pour voir si une entrée correspondante existe
         const favori = await Favoir.findOne({ user: userId, 'produits.produit': produitId });
 
-        // Si une entrée est trouvée, le produit est dans les favoris, sinon, il ne l'est pas
         const isProduitFavori = !!favori;
 
         res.status(200).json(isProduitFavori);
@@ -67,5 +63,18 @@ exports.isProduitFavori = async (req, res) => {
         console.error('Erreur lors de la vérification si le produit est favori :', error);
         res.status(500).json({ message: 'Erreur lors de la vérification si le produit est favori' });
     }
-};
 
+
+};
+exports.getall=async (req,res)=>{
+    try {
+      let result =await Favoir.find();
+      res.status(200).send(result);
+      
+    } catch (error) {
+      res.status(500).send(error);
+    }
+    
+    
+    
+    }

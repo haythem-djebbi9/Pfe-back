@@ -56,7 +56,9 @@ exports.getAllFeedbacks = async (req, res) => {
 
                    
                 },
-                feedbackText: feedback.feedback
+                id:feedback._id,
+                feedbackText: feedback.feedback,
+                affiche:feedback.affiche
             });
         }
 
@@ -83,4 +85,24 @@ exports.getAllFeedbacks = async (req, res) => {
       res.status(500).send(error);
     }
     
+};
+exports.setFeedbackAffiche = async (req, res) => {
+    try {
+        const { feedbackId } = req.params;
+
+        // Vérifier si le feedback existe
+        const feedback = await Feedback.findById(feedbackId);
+        if (!feedback) {
+            return res.status(404).json({ message: "Feedback introuvable." });
+        }
+
+        // Mettre affiche à true
+        feedback.affiche = true;
+        await feedback.save();
+
+        res.status(200).json({ message: "Affichage du feedback modifié avec succès." });
+    } catch (error) {
+        console.error('Erreur lors de la modification de l\'affichage du feedback :', error);
+        res.status(500).json({ message: "Une erreur s'est produite lors de la modification de l'affichage du feedback." });
+    }
 };
